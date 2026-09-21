@@ -20,7 +20,8 @@ __pycache__/
 # Reference CSVs (courier_costs.csv etc.) are small enough to commit
 # but the main log file and all cache outputs are excluded.
 data/allocation_algorithm_logs_20240105.csv
-data/cache/
+data/cache/*
+!data/cache/*.png
 
 # ── Jupyter ───────────────────────────────────────────────────
 # Keep .ipynb files (notebooks are source), but exclude checkpoint dirs
