@@ -1,0 +1,47 @@
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.python-version
+*.pyd
+*.egg-info/
+*.egg
+.eggs/
+
+# ── Virtual environment ───────────────────────────────────────
+.venv/
+
+# ── Environment variables ─────────────────────────────────────
+.env
+.env.*
+
+# ── Data — raw & generated ────────────────────────────────────
+# Raw data files are large and not version-controlled.
+# Reference CSVs (courier_costs.csv etc.) are small enough to commit
+# but the main log file and all cache outputs are excluded.
+data/allocation_algorithm_logs_20240105.csv
+data/cache/
+
+# ── Jupyter ───────────────────────────────────────────────────
+# Keep .ipynb files (notebooks are source), but exclude checkpoint dirs
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ── Working / planning documents ─────────────────────────────
+PLAN.html
+
+# ── IDE & editor ─────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Cursor / tooling ─────────────────────────────────────────
+.cursor/
+.worktrees/
+.checkpoint_cache/
+scripts/
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

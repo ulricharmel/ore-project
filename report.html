@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Fulfilment Allocation — Full Project Report</title>
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{
+  --blue:#3a7ebf;--blue-lt:#dbeafe;--blue-dk:#1d4ed8;
+  --orange:#e06c2b;--orange-lt:#ffedd5;
+  --green:#2ca45d;--green-lt:#dcfce7;--green-dk:#166534;
+  --purple:#7b2d8b;--purple-lt:#f3e8ff;
+  --red:#c0392b;--red-lt:#fef0ef;
+  --teal:#1abc9c;--teal-lt:#d1faf4;
+  --bg:#f2f4f8;--card:#fff;--border:#dde3ec;
+  --text:#1a1a2e;--muted:#6b7280;--muted2:#9ca3af;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.72;}
+/* NAV */
+nav{background:#1d3557;color:#fff;padding:12px 36px;display:flex;align-items:center;gap:16px;
+    position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(0,0,0,.22);}
+nav .title{font-weight:800;font-size:15px;color:#fff;margin-right:auto;}
+nav a{color:rgba(255,255,255,.78);text-decoration:none;font-size:12.5px;padding:5px 11px;
+      border-radius:5px;transition:background .15s;}
+nav a:hover{background:rgba(255,255,255,.16);}
+/* HERO */
+.hero{background:linear-gradient(135deg,#1d3557 0%,#457b9d 55%,#2ca45d 100%);
+      color:#fff;padding:60px 40px 52px;}
+.hero h1{font-size:2.2rem;font-weight:900;letter-spacing:-.6px;margin-bottom:12px;max-width:700px;}
+.hero .sub{font-size:1rem;opacity:.84;max-width:660px;line-height:1.65;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;}
+.hb{background:rgba(255,255,255,.14);border-radius:20px;padding:5px 14px;
+    font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.22);}
+/* PAGE */
+.page{max-width:1100px;margin:0 auto;padding:48px 28px 100px;}
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;gap:14px;margin:56px 0 24px;
+    padding-bottom:14px;border-bottom:2px solid var(--border);}
+.badge{background:var(--blue);color:#fff;border-radius:50%;width:38px;height:38px;
+       display:flex;align-items:center;justify-content:center;font-weight:800;
+       font-size:16px;flex-shrink:0;}
+.badge.t2{background:var(--orange);}
+.badge.t3{background:var(--purple);}
+.badge.sum{background:var(--green);}
+h2{font-size:1.6rem;font-weight:800;letter-spacing:-.3px;}
+h3{font-size:1.08rem;font-weight:700;margin:28px 0 10px;}
+h4{font-size:.92rem;font-weight:700;margin:14px 0 6px;color:var(--blue);}
+p{margin-bottom:14px;}
+ul,ol{padding-left:22px;margin-bottom:14px;}
+li{margin-bottom:5px;}
+/* STAT GRID */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:20px 0;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.sv{font-size:2rem;font-weight:900;line-height:1.1;}
+.sl{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
+.green{color:var(--green);}.orange{color:var(--orange);}
+.purple{color:var(--purple);}.blue{color:var(--blue);}.red{color:var(--red);}
+/* TABLES */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;
+      box-shadow:0 1px 3px rgba(0,0,0,.07);border-radius:8px;overflow:hidden;}
+thead th{background:#f0f4f9;text-align:left;padding:9px 13px;
+         border-bottom:2px solid var(--border);font-weight:700;font-size:13px;}
+td{padding:8px 13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f7f9fc;}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
+.best{background:#e8f8ef!important;font-weight:700;}
+.warn{background:#fff7ed!important;}
+.dim{color:var(--muted);font-style:italic;}
+/* CALLOUTS */
+.callout{border-left:4px solid var(--blue);background:var(--blue-lt);
+         border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;font-size:14px;}
+.callout.green{border-color:var(--green);background:var(--green-lt);}
+.callout.orange{border-color:var(--orange);background:var(--orange-lt);}
+.callout.purple{border-color:var(--purple);background:var(--purple-lt);}
+.callout.red{border-color:var(--red);background:var(--red-lt);}
+.callout.teal{border-color:var(--teal);background:var(--teal-lt);}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+      padding:20px 24px;margin:14px 0;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:16px 0;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin:16px 0;}
+@media(max-width:700px){.two-col,.three-col{grid-template-columns:1fr;}}
+/* MATH BLOCKS */
+.math-block{background:#1e1e2e;border-radius:10px;padding:22px 28px;margin:20px 0;overflow-x:auto;}
+.math-block .katex{color:#cdd6f4;font-size:1.08em;}
+.math-block .katex-display{margin:10px 0;}
+.math-label{font-size:11px;color:#7c8db0;margin-bottom:12px;font-family:monospace;letter-spacing:.6px;text-transform:uppercase;}
+.math-desc{font-size:12.5px;color:#a0aec0;margin-top:8px;}
+/* BARS */
+.bars{margin:14px 0;}
+.bar-row{display:flex;align-items:center;gap:10px;margin:9px 0;}
+.bl{width:200px;font-size:12.5px;flex-shrink:0;line-height:1.3;}
+.bw{flex:1;background:#e4e9f0;border-radius:5px;height:23px;position:relative;overflow:visible;}
+.bf{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;
+    font-size:11.5px;font-weight:700;color:#fff;position:relative;white-space:nowrap;}
+.bv{position:absolute;left:calc(100% + 8px);color:var(--text);font-weight:600;font-size:12px;}
+.g{background:var(--green);} .b{background:var(--blue);} .o{background:var(--orange);}
+.p{background:var(--purple);} .r{background:var(--red);} .t{background:var(--teal);}
+/* CODE */
+code{background:#e8edf5;border:1px solid #c8d0df;border-radius:4px;
+     padding:2px 7px;font-size:12.5px;font-family:'Cascadia Code','Fira Code',monospace;
+     color:#1d3557;}
+pre{background:#0d1117;border:1px solid #30363d;border-radius:10px;
+    padding:22px 26px;margin:18px 0;overflow-x:auto;line-height:1.65;
+    font-family:'Cascadia Code','Fira Code','Consolas',monospace;font-size:13px;}
+pre code{background:transparent;border:none;padding:0;font-size:inherit;
+         color:#e6edf3;border-radius:0;}
+/* lightweight syntax hints inside code blocks */
+pre .cm{color:#8b949e;font-style:italic;}   /* comments */
+pre .kw{color:#ff7b72;}                     /* keywords: def, if, not, for */
+pre .st{color:#a5d6ff;}                     /* strings */
+pre .fn{color:#d2a8ff;}                     /* function names */
+pre .va{color:#79c0ff;}                     /* variables / params */
+pre .hl{background:rgba(255,200,50,.10);    /* highlighted line */
+        display:inline-block;width:100%;border-radius:3px;}
+/* PLOT WRAPPER */
+.plot-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;
+           overflow:hidden;margin:20px 0;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.plot-wrap img{width:100%;display:block;}
+.plot-cap{padding:10px 18px 14px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--border);
+          background:#f9fafb;line-height:1.5;}
+.plot-cap strong{color:var(--text);}
+/* LIMITATIONS */
+.lim{border:1px solid #fcd5d0;border-left:4px solid var(--red);
+     border-radius:0 10px 10px 0;background:#fff5f5;padding:14px 18px;margin:12px 0;}
+.lim h4{color:var(--red);margin:0 0 6px;}
+/* FILE GRID */
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:14px 0;}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:13px 16px;}
+.fc code{font-size:11px;color:var(--blue-dk);display:block;margin-bottom:5px;
+          background:transparent;border:none;padding:0;}
+.fc p{font-size:12px;color:var(--muted);margin:0;}
+/* DIVIDER */
+hr{border:none;border-top:2px solid var(--border);margin:48px 0;}
+/* HYPOTHESIS */
+.hyp{display:flex;gap:12px;margin:14px 0;background:var(--card);
+     border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+.hyp-badge{flex-shrink:0;font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;
+           height:fit-content;margin-top:2px;}
+.confirmed{background:#dcfce7;color:var(--green-dk);}
+.failed{background:#fef0ef;color:var(--red);}
+.hyp-body h4{margin:0 0 4px;font-size:.9rem;}
+.hyp-body p{margin:0;font-size:13px;color:#444;}
+/* ═══════════ FLOWCHART ═══════════ */
+.fc-wrap{margin:28px 0;overflow-x:auto;}
+.fc-diagram{min-width:680px;padding:20px;background:var(--card);border:1px solid var(--border);
+            border-radius:12px;font-size:13px;}
+.fc-node{border-radius:8px;padding:9px 16px;text-align:center;font-weight:600;
+         line-height:1.35;display:inline-block;min-width:140px;}
+.fc-start,.fc-end{border-radius:24px;padding:8px 22px;min-width:120px;}
+.fc-start{background:#1d3557;color:#fff;}
+.fc-end{background:var(--green);color:#fff;}
+.fc-proc{background:var(--blue-lt);border:2px solid var(--blue);color:var(--blue-dk);}
+.fc-dec{background:#fff8ee;border:2px solid var(--orange);color:#7c3000;}
+.fc-greed{background:#fff8ee;border:2px solid var(--orange);color:#7c3000;}
+.fc-mip{background:var(--purple-lt);border:2px solid var(--purple);color:var(--purple);}
+.fc-cancel{background:var(--red-lt);border:2px solid var(--red);color:var(--red);}
+.fc-col{display:flex;flex-direction:column;align-items:center;}
+.fc-row{display:flex;align-items:flex-start;justify-content:center;gap:28px;}
+.arr-d{width:2px;height:28px;background:#aaa;position:relative;flex-shrink:0;margin:0 auto;}
+.arr-d::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top:7px solid #aaa;}
+.arr-r{height:2px;background:#aaa;position:relative;flex:1;min-width:24px;margin:auto 0;}
+.arr-r::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);
+  border:5px solid transparent;border-left:7px solid #aaa;}
+.fc-label{font-size:11px;font-weight:700;color:var(--muted);margin:2px 4px;}
+.fc-box-wide{max-width:440px;text-align:left;padding:12px 16px;}
+.fc-note{font-size:11px;font-weight:400;color:var(--muted);margin-top:3px;}
+.branch-wrap{display:flex;gap:20px;align-items:flex-start;}
+.branch{display:flex;flex-direction:column;align-items:center;flex:1;}
+.hline{height:2px;background:#ccc;margin:0 auto;}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="title">Fulfilment Allocation Report</span>
+  <a href="#task1">1 · EDA</a>
+  <a href="#task2">2 · Allocation</a>
+  <a href="#task3">3 · Prediction</a>
+  <a href="#summary">Summary</a>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <h1>Fulfilment Network<br>Allocation Report</h1>
+  <p class="sub">End-to-end analysis of a South African e-commerce fulfilment network.
+  We explore the current allocation algorithm, build a cost-optimal replacement using integer
+  programming, and train a predictive model to estimate parcel complexity (the number of parcels an order will require) at order arrival.</p>
+  <div class="hero-badges">
+    <span class="hb">3,810 orders · Jan 2024 snapshot</span>
+    <span class="hb">353 facilities · 9 provinces</span>
+    <span class="hb">3 couriers · 6,587 unique SKUs</span>
+    <span class="hb">Greedy + Exact MIP solvers</span>
+    <span class="hb">XGBoost · SHAP interpretation</span>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TASK 1 — EDA
+═══════════════════════════════════════════════════════════════ -->
+<div class="sh" id="task1">
+  <div class="badge">1</div>
+  <h2>Task 1 — Exploratory Data Analysis</h2>
+</div>
+
+<h3>What this analysis sets out to understand</h3>
+<p>Before building any allocation model, we need a clear picture of three things:
+<strong>(1)</strong> What does the physical fulfilment network look like — facility types, geographic spread, courier rules?
+<strong>(2)</strong> What does the current production algorithm do — how often does it split orders, what does it cost, where does it fail?
+<strong>(3)</strong> Which structural properties of an order make splitting unavoidable versus avoidable?</p>
+<p>The analysis covers the full dataset — no sampling — across all 3,810 orders and 104,777 inventory records.</p>
+
+<h3>Data pipeline</h3>
+<p>The raw data is a single large CSV where each row is one order. Several columns contain nested JSON objects encoding the order details (items, quantities, delivery address), the inventory snapshot across all facilities, and the production plan.
+We unpack these into four flat DataFrames and cache them as <strong>Parquet files</strong> for all downstream steps. Parquet is a columnar binary format: it reads ~10× faster than CSV, preserves column types (no re-parsing), and handles the ~100k row inventory table in under 1 second.</p>
+
+<table>
+  <thead><tr><th>DataFrame</th><th>Key columns</th><th class="num">Rows</th></tr></thead>
+  <tbody>
+    <tr><td><code>orders</code></td><td>order_id, delivery_type, destination_postal, province</td><td class="num">3,810</td></tr>
+    <tr><td><code>items</code></td><td>order_id, order_item_id, sku, alternative_sku, quantity, excluded_branches</td><td class="num">8,626</td></tr>
+    <tr><td><code>inventory</code></td><td>order_id, facility_id, sku, qty_available, is_active, courier_c_active</td><td class="num">104,777</td></tr>
+    <tr><td><code>reservations</code></td><td>order_id, facility_id, courier_id, lmr, cost</td><td class="num">9,474</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <strong>Reservations vs items:</strong> 8,626 items ordered but 9,474 reservation lines. The difference comes from multi-quantity items — a single line item with quantity 3 may generate 3 reservation rows, one per unit. Only 6 items have no reservation at all (6 cancellation events logged; 4 are true stockouts, 2 are internal retry artefacts — see Task 2 for the breakdown). No order is left completely unallocated.
+</div>
+
+<h3>Network at a glance</h3>
+<div class="sg">
+  <div class="sc"><div class="sv blue">3,810</div><div class="sl">Orders on this day</div></div>
+  <div class="sc"><div class="sv blue">8,626</div><div class="sl">Order line items</div></div>
+  <div class="sc"><div class="sv blue">353</div><div class="sl">Active facilities (with stock)</div></div>
+  <div class="sc"><div class="sv blue">6,587</div><div class="sl">Unique SKUs in inventory</div></div>
+  <div class="sc"><div class="sv orange">32.9%</div><div class="sl">Production split rate (orders to &gt;1 facility)</div></div>
+  <div class="sc"><div class="sv orange">1.57</div><div class="sl">Mean parcels per order</div></div>
+  <div class="sc"><div class="sv green">0.2%</div><div class="sl">Cancellation rate (6 items with no stock anywhere)</div></div>
+  <div class="sc"><div class="sv orange">R230</div><div class="sl">Courier-selection gap — actual vs cheapest possible</div></div>
+</div>
+
+<!-- FIGURE 1 — order characteristics -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_01_order_characteristics.png" alt="Order characteristics charts"/>
+  <div class="plot-cap">
+    <strong>Figure 1 — Order characteristics.</strong>
+    Top-left: delivery type split (67.3% DoorToDoor, 32.7% StorePickup).
+    Top-right: orders per province — Gauteng is the largest destination, Northern Cape the smallest.
+    Bottom-left: items per order distribution — heavily right-skewed; median = 1 item, max = 44.
+    Bottom-right: trading companies per order — 19.2% of orders span multiple brands.
+  </div>
+</div>
+
+<h3>Order demand characteristics</h3>
+<p><strong>Delivery type:</strong> 2,566 orders (67.3%) are DoorToDoor — items shipped to the customer's address. The remaining 1,244 (32.7%) are StorePickup, where the customer collects at a specific branch. StorePickup orders are structurally simpler: the destination facility is pre-determined, so the algorithm only needs to confirm that branch has stock.</p>
+
+<div class="two-col">
+  <div class="card">
+    <h4>Orders by items per order</h4>
+    <div class="bars">
+      <div class="bar-row"><div class="bl">1 item</div><div class="bw"><div class="bf b" style="width:52.5%"><span class="bv">2,000 (52.5%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">2 items</div><div class="bw"><div class="bf b" style="width:19.7%"><span class="bv">751 (19.7%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">3 items</div><div class="bw"><div class="bf b" style="width:11.3%"><span class="bv">431 (11.3%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">4 items</div><div class="bw"><div class="bf b" style="width:6.0%"><span class="bv">229 (6.0%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">5 items</div><div class="bw"><div class="bf b" style="width:4.0%"><span class="bv">152 (4.0%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">6–15 items</div><div class="bw"><div class="bf p" style="width:6.2%"><span class="bv">236 (6.2%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">&gt;15 items</div><div class="bw"><div class="bf r" style="width:0.3%"><span class="bv">11 (0.3%)</span></div></div></div>
+    </div>
+    <p style="font-size:12px;color:var(--muted)">Median = 1 item · Mean = 2.26 · Max = 44 (bulk/business order). The distribution is heavily right-skewed — most volume is simple single-item orders.</p>
+  </div>
+  <div class="card">
+    <h4>Parcels per order (production plan)</h4>
+    <div class="bars">
+      <div class="bar-row"><div class="bl">1 parcel (no split)</div><div class="bw"><div class="bf g" style="width:67.1%"><span class="bv">2,555 (67.1%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">2 parcels</div><div class="bw"><div class="bf b" style="width:19.7%"><span class="bv">751 (19.7%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">3 parcels</div><div class="bw"><div class="bf o" style="width:7.6%"><span class="bv">289 (7.6%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">4 parcels</div><div class="bw"><div class="bf o" style="width:3.2%"><span class="bv">122 (3.2%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">5 parcels</div><div class="bw"><div class="bf r" style="width:1.2%"><span class="bv">44 (1.2%)</span></div></div></div>
+      <div class="bar-row"><div class="bl">6–12 parcels</div><div class="bw"><div class="bf r" style="width:1.3%"><span class="bv">49 (1.3%)</span></div></div></div>
+    </div>
+    <p style="font-size:12px;color:var(--muted)">Mean = 1.57 parcels · median = 1. The 32.9% split rate is the primary cost driver — each extra parcel adds a full courier charge.</p>
+  </div>
+</div>
+
+<!-- FIGURE 2 — network -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_02_network.png" alt="Fulfilment network overview"/>
+  <div class="plot-cap">
+    <strong>Figure 2 — Fulfilment network.</strong>
+    Geographic concentration: Gauteng holds 172 facilities (48.7%) and Western Cape 102 (28.9%).
+    Five provinces have no facilities at all — any order destined there ships cross-province, paying at least Main LMR rates.
+    DCs (17 nodes, 4.8% of facilities) carry significantly deeper stock: mean 14.29 units per DC-SKU record vs 8.90 for stores.
+  </div>
+</div>
+
+<h3>Facility types and the DC virtual branch subtlety</h3>
+<p>Of the 353 facilities with stock, <strong>336 (95.2%) are Stores</strong> and <strong>17 (4.8%) are Distribution Centres</strong>. DCs are underrepresented in count but carry more depth. A critical domain detail: each DC contains multiple <em>virtual branches</em>, one per trading company, each with its own branch code in inventory. However, all items picked from the same physical building share a loading dock and leave in <strong>one parcel</strong>.</p>
+<p>This means: (1) stock must be <strong>summed</strong> across all virtual branches of the same DC and (2) parcel cost is counted once per physical DC. We use <code>dc_branch_numbers.csv</code> to group branches by their <code>dc_type</code> field. Correcting for this changes the split rate from a naive 33.8% down to the correct <strong>32.9%</strong> — 142 orders that appeared to split were actually consolidated within the same DC.</p>
+
+<h3>The LMR zone — a route property, not a facility property</h3>
+<p>The most important domain insight from the EDA: shipping cost depends on the <em>route</em> (origin postal × destination postal × courier's hub network), not just the facility. The three LMR levels:</p>
+<table>
+  <thead><tr><th>Zone</th><th>Rule</th><th class="num">DoorToDoor (courier_a)</th><th class="num">StorePickup (courier_a)</th></tr></thead>
+  <tbody>
+    <tr class="best"><td><strong>Local</strong></td><td>Both postcodes are Local/Main in their closest hub, and that hub is the same for both collection and delivery</td><td class="num green">R0.46</td><td class="num green">R0.22</td></tr>
+    <tr><td><strong>Main</strong></td><td>Both postcodes are Local/Main in their hubs, but the collection hub ≠ delivery hub</td><td class="num">R0.69</td><td class="num">R0.38</td></tr>
+    <tr class="warn"><td><strong>Regional</strong></td><td>Either postcode is classified as Regional in the courier's network (remote area)</td><td class="num orange">R0.87</td><td class="num orange">R0.62</td></tr>
+  </tbody>
+</table>
+<p>Production appears to classify LMR at the facility level (ignoring the customer's postcode), which means it frequently pays Main rates (R0.69) for routes that are actually Local (R0.46). This 33% unit-cost premium on a large fraction of orders is the dominant source of our Task 2 savings.</p>
+
+<!-- FIGURE 3 — quality metrics -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_03_quality_metrics.png" alt="Allocation quality metrics"/>
+  <div class="plot-cap">
+    <strong>Figure 3 — Allocation quality metrics.</strong>
+    Left: split rate by province — Northern Cape (41.1%) vs Gauteng (30.9%), a 10pp gap driven by facility density, not order complexity.
+    Centre: split rate by n_unique_skus — strictly monotone, from 0.5% (1 SKU) to 98%+ (7+ SKUs).
+    Right: split rate by number of trading companies — 18.0% for single-brand orders, 100% for all multi-brand orders.
+  </div>
+</div>
+
+<h3>What drives allocation splits — hypotheses tested</h3>
+
+<div class="hyp">
+  <span class="hyp-badge confirmed">✓ Confirmed</span>
+  <div class="hyp-body">
+    <h4>H1 — More items per order means more splits</h4>
+    <p>Spearman ρ = 0.806 (p &lt; 0.001). The transition from 1 to 2 items is the steepest: split rate jumps from 0.3% to 53.5%, because finding one facility stocking two specific SKUs simultaneously is far harder than finding one stocking either alone. 98% of orders with 7+ items split — the rare exceptions are large single-SKU bulk orders fulfilled from one warehouse.</p>
+  </div>
+</div>
+
+<div class="hyp">
+  <span class="hyp-badge confirmed">✓ Confirmed</span>
+  <div class="hyp-body">
+    <h4>H2 — Multi-brand orders always split (100% split rate)</h4>
+    <p>Every single one of the 732 orders (19.2%) containing items from 2+ trading companies splits — a 100% split rate. Single-brand orders split at only 18.0%. The mechanism is structural: different trading companies stock items at dedicated DC subsets. No single facility holds cross-brand inventory for the same order in this dataset.</p>
+  </div>
+</div>
+
+<div class="hyp">
+  <span class="hyp-badge confirmed">✓ Confirmed</span>
+  <div class="hyp-body">
+    <h4>H3 — courier_c is avoided for non-Local routes</h4>
+    <p>courier_c has a sentinel cost of 10,000 for DoorToDoor Main/Regional and all StorePickup routes — effectively unavailable. It is used 234 times, always DoorToDoor Local at R0.20 — the cheapest rate in the entire cost table. This is a hard constraint, not a policy preference.</p>
+  </div>
+</div>
+
+<div class="hyp">
+  <span class="hyp-badge failed">✗ Not confirmed</span>
+  <div class="hyp-body">
+    <h4>H4 — DCs are used as a last resort</h4>
+    <p>71.5% of DC reservations (1,670 of 2,337) occur when at least one Store also holds the SKU. The algorithm frequently prefers DCs over Stores — likely for depth-of-stock, lower pick-error rates, or upstream SKU–facility assignments. DCs are not a fallback; they are preferred for many SKUs.</p>
+  </div>
+</div>
+
+<div class="hyp">
+  <span class="hyp-badge confirmed">✓ Confirmed</span>
+  <div class="hyp-body">
+    <h4>H5 — Split rate is lower in Gauteng than peripheral provinces</h4>
+    <p>Northern Cape: 41.1% · Limpopo: 37.0% · Western Cape: 33.9% · Gauteng: 30.9%. The 10pp gap between Gauteng and Northern Cape is driven by facility density — remote provinces have fewer nearby options so orders must ship cross-province, increasing both cost and complexity.</p>
+  </div>
+</div>
+
+<table style="margin:24px 0">
+  <thead><tr><th>Items in order</th><th class="num">Orders</th><th class="num">Split rate</th><th class="num">Mean parcels</th></tr></thead>
+  <tbody>
+    <tr class="best"><td>1</td><td class="num">2,000</td><td class="num">0.3%</td><td class="num">1.00</td></tr>
+    <tr><td>2</td><td class="num">751</td><td class="num">53.5%</td><td class="num">1.54</td></tr>
+    <tr><td>3</td><td class="num">431</td><td class="num">71.9%</td><td class="num">2.00</td></tr>
+    <tr><td>4</td><td class="num">229</td><td class="num">84.3%</td><td class="num">2.53</td></tr>
+    <tr><td>5</td><td class="num">152</td><td class="num">94.1%</td><td class="num">3.03</td></tr>
+    <tr><td>6</td><td class="num">89</td><td class="num">87.6%</td><td class="num">3.10</td></tr>
+    <tr class="warn"><td>7+</td><td class="num">158</td><td class="num">98.1%</td><td class="num">4.35–12</td></tr>
+  </tbody>
+</table>
+
+<table style="margin:24px 0">
+  <thead><tr><th>Trading companies</th><th class="num">Orders</th><th class="num">Split rate</th><th class="num">Mean parcels</th></tr></thead>
+  <tbody>
+    <tr class="best"><td>1 (single brand)</td><td class="num">3,078</td><td class="num">18.0%</td><td class="num">1.25</td></tr>
+    <tr class="warn"><td>2 brands</td><td class="num">561</td><td class="num">100%</td><td class="num">2.67</td></tr>
+    <tr class="warn"><td>3 brands</td><td class="num">147</td><td class="num">100%</td><td class="num">4.35</td></tr>
+    <tr class="warn"><td>4 brands</td><td class="num">23</td><td class="num">100%</td><td class="num">6.61</td></tr>
+  </tbody>
+</table>
+
+<h3>Inventory coverage — can any single facility handle the full order?</h3>
+<p>The strongest predictor of whether an order will split is whether a single facility exists that holds sufficient stock for every SKU in the order simultaneously. We define <code>n_full_facilities</code> as the count of such facilities per order.</p>
+
+<!-- FIGURE 5 — inventory vs parcels -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_05_inventory_vs_parcels.png" alt="Inventory coverage vs split rate"/>
+  <div class="plot-cap">
+    <strong>Figure 5 — Inventory coverage vs allocation outcomes.</strong>
+    Left: n_full_facilities distribution — 31.9% of orders have zero full-coverage facilities (split is unavoidable).
+    Right: split rate by n_full_facilities — drops from 99.8% (0 facilities) to 4.0% (1 facility) and falls further to 0.8% (11+ facilities).
+    The sharp cliff at n_full_facilities = 1 confirms that splitting is a constraint, not an algorithm failure.
+  </div>
+</div>
+
+<table>
+  <thead><tr><th>n_full_facilities</th><th class="num">Orders</th><th class="num">Split rate</th><th>Interpretation</th></tr></thead>
+  <tbody>
+    <tr class="warn"><td>0 — no single facility covers all items</td><td class="num">1,215</td><td class="num red">99.8%</td><td>Split is structurally unavoidable</td></tr>
+    <tr><td>1</td><td class="num">730</td><td class="num green">4.0%</td><td>Single option — algorithm almost always takes it</td></tr>
+    <tr><td>2–5</td><td class="num">649</td><td class="num green">4.6%</td><td>Small choice set; rare splits may be cost-optimal</td></tr>
+    <tr><td>6–10</td><td class="num">432</td><td class="num green">2.1%</td><td>Good coverage — easy consolidation</td></tr>
+    <tr class="best"><td>11+</td><td class="num">784</td><td class="num green">0.8%</td><td>Abundant options — essentially always consolidated</td></tr>
+  </tbody>
+</table>
+<div class="callout green">
+  <strong>The key structural finding:</strong> The split rate drops from 99.8% to 4.0% the moment even one full-coverage facility exists. This means the production algorithm does an excellent job of consolidating orders when consolidation is physically possible. Splitting is an inventory-stocking problem, not an algorithmic one.
+</div>
+
+<h3>Courier cost structure</h3>
+<p>Production uses three couriers with very different cost profiles. <strong>courier_a</strong> dominates (73.2% of reservation lines). <strong>courier_b</strong> is more expensive than courier_a on every route but is the <em>only</em> option for dc_b branch orders. <strong>courier_c</strong> is the cheapest (R0.20 Local DoorToDoor) but restricted to facilities where <code>FacilityCourierCActive = True</code> and the customer is within 20 km.</p>
+
+<table>
+  <thead><tr><th>Delivery type</th><th>Courier</th><th class="num">Local</th><th class="num">Main</th><th class="num">Regional</th></tr></thead>
+  <tbody>
+    <tr><td>DoorToDoor</td><td>courier_a</td><td class="num">R0.46</td><td class="num">R0.69</td><td class="num">R0.87</td></tr>
+    <tr><td>DoorToDoor</td><td>courier_b</td><td class="num">R0.55</td><td class="num">R0.72</td><td class="num">R0.95</td></tr>
+    <tr class="best"><td>DoorToDoor</td><td>courier_c</td><td class="num green">R0.20</td><td class="num dim">N/A (sentinel 10k)</td><td class="num dim">N/A</td></tr>
+    <tr><td>StorePickup</td><td>courier_a</td><td class="num">R0.22</td><td class="num">R0.38</td><td class="num">R0.62</td></tr>
+    <tr><td>StorePickup</td><td>courier_b</td><td class="num">R0.62</td><td class="num">R0.62</td><td class="num">R0.62</td></tr>
+    <tr><td>StorePickup</td><td>courier_c</td><td class="num dim" colspan="3">N/A on all routes</td></tr>
+  </tbody>
+</table>
+
+<table style="margin-top:20px">
+  <thead><tr><th>Courier</th><th class="num">Reservations</th><th class="num">Share</th><th>LMR zones used</th></tr></thead>
+  <tbody>
+    <tr><td>courier_a</td><td class="num">6,939</td><td class="num">73.2%</td><td>Local, Main, Regional</td></tr>
+    <tr><td>courier_b</td><td class="num">2,164</td><td class="num">22.8%</td><td>Local only (always collected, dc_b branches)</td></tr>
+    <tr><td>courier_c</td><td class="num">234</td><td class="num">2.5%</td><td>DoorToDoor Local only (20 km constraint)</td></tr>
+    <tr><td>same_store / lfs</td><td class="num">137</td><td class="num">1.4%</td><td>In-store collection or furniture logistics</td></tr>
+  </tbody>
+</table>
+
+<!-- FIGURE 4 — cost analysis -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_04_cost_analysis.png" alt="Production cost analysis plots"/>
+  <div class="plot-cap">
+    <strong>Figure 4 — Production cost analysis.</strong>
+    Top-left: cost per order distribution — right-skewed; median R0.69, mean R0.97 (top 10% of orders cost &gt;R1.82 each).
+    Top-right: cost by number of parcels — cost compounds rapidly as parcel count increases; a 5-parcel order costs ~7× a single-parcel order.
+    Bottom-left: LMR zone usage by courier — all courier_b is Local; courier_a covers all three zones.
+    Bottom-right: courier cost comparison — courier_b is 20–180% more expensive than courier_a depending on delivery type.
+  </div>
+</div>
+
+<div class="callout orange">
+  <strong>Courier-selection gap: R230.16.</strong> Production pays R3,919.50 in actual courier costs but the same allocations would cost R3,689.34 if the cheapest eligible courier were always chosen. This R230.16 gap is recoverable without changing <em>which</em> facilities are used — purely by selecting the cheapest courier for each parcel. Our algorithm always selects the cheapest eligible courier.
+</div>
+
+<h3>Full EDA quality metrics summary</h3>
+<table>
+  <thead><tr><th>Metric</th><th class="num">Value</th><th>Interpretation</th></tr></thead>
+  <tbody>
+    <tr><td>Split rate</td><td class="num orange">32.9%</td><td>1 in 3 orders uses more than one physical facility</td></tr>
+    <tr><td>Mean parcels / order</td><td class="num">1.57</td><td>Heavy tail from complex multi-brand orders skews mean above median of 1</td></tr>
+    <tr><td>Median cost per order</td><td class="num">R0.69</td><td>Typical cost — Local DoorToDoor with courier_a</td></tr>
+    <tr><td>Mean cost per order</td><td class="num">R0.97</td><td>~1.4× the median; top 10% of orders cost &gt;R1.82, pulling the mean above R0.69</td></tr>
+    <tr><td>Courier-selection gap</td><td class="num orange">R230.16</td><td>Recoverable by always choosing cheapest eligible courier</td></tr>
+    <tr><td>Cancellation rate</td><td class="num green">0.2%</td><td>6 cancellation events logged by production (4 true stockouts + 2 internal retry artefacts — see Task 2)</td></tr>
+    <tr><td>Full-coverage rate</td><td class="num">68.1%</td><td>2,595 orders had ≥1 facility with all items; 1,215 structurally must split</td></tr>
+    <tr><td>Multi-brand split rate</td><td class="num red">100%</td><td>Every multi-trading-company order split — structural, not algorithmic</td></tr>
+    <tr><td>Same-province source rate</td><td class="num">38.0%</td><td>62% of orders sourced cross-province — Local LMR constrained by stock</td></tr>
+  </tbody>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TASK 2 — ALLOCATION
+═══════════════════════════════════════════════════════════════ -->
+<hr/>
+<div class="sh" id="task2">
+  <div class="badge t2">2</div>
+  <h2>Task 2 — Cost-Optimal Allocation Model</h2>
+</div>
+
+<h3>Problem statement</h3>
+<p>Given an order (a list of items with required quantities) and the current inventory snapshot across all facilities, find an assignment of items to facilities that <strong>minimises total parcel cost</strong>. The critical economic fact is that all items assigned to the same physical facility ship as <em>one</em> parcel — cost is charged per parcel, not per item. This creates a bin-packing structure: concentrating items at fewer facilities saves money even if individual items could be sourced more cheaply elsewhere.</p>
+<p>Each order is solved independently (orders do not compete for inventory in our model — a pragmatic approximation; see Limitations). Two solver variants are implemented: a fast <strong>Greedy + Consolidation</strong> heuristic and an <strong>Integer MIP</strong> where <code>x[i,j] ∈ ℤ≥0</code> counts units assigned, natively handling quantity splits without any post-processing pass.</p>
+
+<h3>Headline results</h3>
+<div class="sg">
+  <div class="sc"><div class="sv green">R822.31</div><div class="sl">Structural saving — Integer MIP vs production (cheapest-courier basis)</div></div>
+  <div class="sc"><div class="sv green">22.3%</div><div class="sl">MIP structural saving % (vs 20.4% Greedy)</div></div>
+  <div class="sc"><div class="sv green">R1,052.47</div><div class="sl">Full saving incl. courier selection — MIP vs actual production</div></div>
+  <div class="sc"><div class="sv purple">5,880</div><div class="sl">MIP total parcels (vs 6,018 Greedy; 4 unshipped items vs 6 for Greedy)</div></div>
+</div>
+
+<!-- ── FLOWCHART ── -->
+<h3>Algorithm — per-order flow</h3>
+<p>The pipeline runs in up to 5 stages. Stage 0 pre-annotates the full inventory once. Stages 1–3 are shared pre-processing. Stage 4 branches to either the Greedy or Integer MIP solver. Stage 5 (last-resort quantity split) applies <strong>only on the Greedy path</strong> — the Integer MIP handles quantity splits natively and returns directly after Stage 4.</p>
+
+<div class="fc-wrap">
+<div class="fc-diagram">
+
+  <!-- Stage 0 + 1 + 2 + 3 (vertical) -->
+  <div class="fc-col">
+
+    <div class="fc-node fc-start">Order request received</div>
+    <div class="arr-d"></div>
+
+    <div class="fc-node fc-proc fc-box-wide" style="min-width:480px">
+      <strong>Stage 0 — Global cost pre-computation</strong> <em style="font-size:11px;font-weight:400;color:var(--muted)">(runs once for all orders)</em>
+      <div class="fc-note">Annotates all 104,777 inventory rows with <code>cost_DoorToDoor</code> and <code>cost_StorePickup</code>
+      using a 12-entry table (delivery_type × LMR × courier). dc_b rows → courier_b only;
+      non-dc_b → cheapest of courier_a / courier_c. Vectorised single pass.</div>
+    </div>
+    <div class="arr-d"></div>
+
+    <div class="fc-node fc-proc fc-box-wide" style="min-width:480px">
+      <strong>Stage 1 — Pre-filter + DC branch merging</strong>
+      <div class="fc-note">Remove inactive facilities, qty_available = 0, at-capacity.
+      Merge DC virtual branches → one physical key per DC (<code>dc_branch_numbers.csv</code>).
+      Sum stock across branches (not max). Apply per-item <code>excluded_branches</code> restrictions.</div>
+    </div>
+    <div class="arr-d"></div>
+
+    <div class="fc-node fc-proc fc-box-wide" style="min-width:480px">
+      <strong>Stage 2 — Route LMR cost override</strong>
+      <div class="fc-note">For each non-dc_b facility: recompute parcel cost using the order's
+      <code>destination_postal</code> and the courier's hub network (origin postal × dest postal → LMR zone).
+      Falls back to Stage 0 cost if postal code is absent from courier network. dc_b rows keep courier_b costs.</div>
+    </div>
+    <div class="arr-d"></div>
+
+    <div class="fc-node fc-dec" style="min-width:480px;border-radius:8px">
+      <strong>Stage 3 — Single-facility check</strong>
+      <div class="fc-note">Does any one facility have sufficient stock for ALL items?</div>
+    </div>
+
+    <!-- YES / NO fork -->
+    <div style="display:flex;gap:0;width:100%;margin-top:0;">
+      <!-- YES -->
+      <div class="branch" style="flex:0 0 220px;padding:0 10px;">
+        <div class="arr-d"></div>
+        <div class="fc-label" style="color:var(--green)">Yes (66% of orders)</div>
+        <div class="fc-node fc-end" style="font-size:12px;padding:8px 16px;min-width:0">
+          Assign to cheapest<br>eligible facility → DONE
+        </div>
+      </div>
+
+      <!-- NO -->
+      <div class="branch" style="flex:1;border-left:2px dashed var(--border);padding-left:20px;">
+        <div class="arr-d"></div>
+        <div class="fc-label" style="color:var(--red)">No — must split (34% of orders)</div>
+
+        <!-- Solver branch -->
+        <div style="display:flex;gap:20px;width:100%;">
+
+          <!-- GREEDY -->
+          <div class="branch" style="flex:1;">
+            <div class="fc-node fc-greed" style="font-size:12px;padding:8px 14px;width:100%">
+              <strong>Greedy + Consolidation</strong><br>
+              <code style="font-size:10px">use_exact=False</code>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-proc" style="font-size:12px;padding:8px 12px;width:100%;text-align:left">
+              <strong>4a. Sort items by scarcity</strong><br>
+              <span style="color:var(--muted)">Count eligible facilities per item (primary + alt SKU). Scarcest first — fewest options must be placed first to avoid dead ends.</span>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-proc" style="font-size:12px;padding:8px 12px;width:100%;text-align:left">
+              <strong>4b. Assign each item</strong><br>
+              <span style="color:var(--muted)">Re-use an already-open facility (zero marginal cost) if it has stock. Else open the cheapest new facility with sufficient stock. Try primary SKU first, then alternative.</span>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-proc" style="font-size:12px;padding:8px 12px;width:100%;text-align:left">
+              <strong>4c. Consolidation pass</strong><br>
+              <span style="color:var(--muted)">Iterate over chosen facilities, most expensive first. Try to move all items from that facility to remaining open ones without exceeding stock. If successful, remove facility, reducing parcel count and cost. Repeat until no improvement.</span>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-proc" style="font-size:12px;padding:10px 12px;width:100%;text-align:left;border:2px solid #e67e22;background:rgba(230,126,34,0.06)">
+              <strong>Stage 5 — Last-resort quantity split</strong> <span style="font-size:10px;color:#e67e22;font-weight:600">(Greedy path only)</span><br>
+              <span style="color:var(--muted)">Items still unassigned because no single facility holds sufficient qty. Distribute across up to k=3 facilities, deducting from stock. Items still uncovered → cancel.</span>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-cancel" style="font-size:12px;padding:8px 14px;width:100%;text-align:center">
+              Unresolvable items → <strong>Cancel</strong><br>
+              <span style="font-size:11px">(true stockout: zero qty anywhere in network)</span>
+            </div>
+          </div>
+
+          <!-- MIP -->
+          <div class="branch" style="flex:1;">
+            <div class="fc-node fc-mip" style="font-size:12px;padding:8px 14px;width:100%">
+              <strong>Integer MIP (scipy HiGHS)</strong><br>
+              <code style="font-size:10px">use_exact=True</code>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-proc" style="font-size:12px;padding:8px 12px;width:100%;text-align:left">
+              <strong>4a. Pre-select SKU per item</strong><br>
+              <span style="color:var(--muted)">For each item: use primary SKU if any facility has ≥1 unit, else use alternative_sku. Avoids bilinear terms in the LP.</span>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-proc" style="font-size:12px;padding:8px 12px;width:100%;text-align:left">
+              <strong>4b. Build sparse integer LP</strong><br>
+              <span style="color:var(--muted)">\(n_j + n_i \cdot n_j\) integer vars. \(x_{ij} \in \{0,\ldots,\text{qty}_i\}\) counts units assigned — handles quantity splits natively. Constraint matrix A, objective, and bounds built as sparse structures.</span>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-proc" style="font-size:12px;padding:8px 12px;width:100%;text-align:left">
+              <strong>4c. scipy.optimize.milp → solve</strong><br>
+              <span style="color:var(--muted)">HiGHS finds the provably optimal assignment. Items are cancelled only when zero stock exists at all eligible facilities. No further post-processing needed.</span>
+            </div>
+            <div class="arr-d"></div>
+            <div class="fc-node fc-end" style="font-size:12px;padding:8px 14px;width:100%;text-align:center;background:rgba(39,174,96,0.10);border-color:var(--green)">
+              Return optimal assignment → <strong>DONE</strong><br>
+              <span style="font-size:11px;color:var(--green)">Stage 5 not needed — splits handled by solver</span>
+            </div>
+          </div>
+
+        </div><!-- solver branch -->
+      </div><!-- NO branch -->
+    </div><!-- fork -->
+  </div><!-- fc-col -->
+</div><!-- fc-diagram -->
+</div><!-- fc-wrap -->
+
+<h3>The MIP formulation in detail</h3>
+<p>For each order with \(n_i\) items and \(n_j\) candidate facilities, we define integer decision variables that directly count units:</p>
+
+<div class="math-block">
+  <div class="math-label">Decision Variables</div>
+  $$y_j \in \{0,1\} \qquad \text{1 if facility } j \text{ is opened (incurs one parcel cost), 0 otherwise}$$
+  $$x_{ij} \in \{0,\,1,\,\ldots,\,\mathrm{qty}_i\} \qquad \text{units of item } i \text{ assigned to facility } j$$
+  <div class="math-desc">Total variables: \(n_j + n_i \cdot n_j\). For a typical order with 3 items and 40 eligible facilities: 40 + 120 = 160 integer variables. Using integer \(x_{ij}\) instead of binary variables natively handles quantity splits across facilities — no post-processing pass needed.</div>
+</div>
+
+<div class="math-block">
+  <div class="math-label">Objective — minimise total parcel cost</div>
+  $$\min_{x,\,y} \;\sum_{j=1}^{n_j} \mathrm{cost}_j \cdot y_j$$
+  <div class="math-desc">Cost of facility \(j\) is the cheapest eligible courier's parcel cost for this specific order's destination, computed in Stage 2. Item handling costs are free — only <em>opening a facility</em> (dispatching a parcel) costs money.</div>
+</div>
+
+<div class="math-block">
+  <div class="math-label">Constraint (a) — Demand satisfaction: all units of each item must be assigned</div>
+  $$\sum_{j=1}^{n_j} x_{ij} = \mathrm{qty}_i \qquad \forall \text{ feasible item } i$$
+  <div class="math-desc">The sum of units sent to all facilities must equal the full quantity required. This allows quantity splits across multiple facilities when no single one has enough stock.</div>
+</div>
+
+<div class="math-block">
+  <div class="math-label">Constraint (b) — Stock capacity: units assigned cannot exceed available stock</div>
+  $$\sum_{\{i \;:\; \mathrm{sku}_i = s\}} x_{ij} \;\leq\; \mathrm{stock}_{js} \qquad \forall j,\; s$$
+  <div class="math-desc">For each facility \(j\) and SKU \(s\), the total units drawn cannot exceed what the facility holds. Coefficients are 1 (not \(\mathrm{qty}_i\)) because \(x_{ij}\) already counts units directly.</div>
+</div>
+
+<div class="math-block">
+  <div class="math-label">Constraint (c) — Linking: facility must be open if any units are sent to it</div>
+  $$x_{ij} \leq \mathrm{qty}_i \cdot y_j \qquad \forall i,\; j$$
+  <div class="math-desc">This connects unit assignment to parcel cost. The big-M coefficient \(\mathrm{qty}_i\) (not 1) ensures \(y_j = 1\) whenever any units are sent to \(j\), regardless of how many. Without this, the solver could assign units to facilities without opening them (zero parcel cost).</div>
+</div>
+
+<div class="math-block">
+  <div class="math-label">Constraint (d) — Exclusions and zero-stock (enforced via variable upper bounds)</div>
+  $$x_{ij} = 0 \quad \text{if item } i \text{ is in facility } j\text{'s excluded\_branches, or stock}_{j,\,\mathrm{sku}_i} = 0$$
+  <div class="math-desc">Forbidden pairs are handled by setting <code>ub[x(i,j)] = 0</code> before passing to the solver. This is more efficient than adding equality constraint rows — HiGHS prunes these variables before branching.</div>
+</div>
+
+<p>The constraint matrix \(A\) is sparse — most \(x_{ij}\) upper bounds are forced to 0 by exclusions and zero-stock, so the effective problem is much smaller than \(n_j + n_i \cdot n_j\) suggests. The HiGHS solver (accessed via <code>scipy.optimize.milp</code>) solves each order in milliseconds.</p>
+
+<h3>Head-to-head results — both solvers vs production</h3>
+<p>Cost comparison uses the <strong>cheapest-available-courier methodology with route LMR</strong> for a fair structural comparison. Both our algorithm and production are evaluated at their cheapest eligible courier for each parcel, removing courier-selection differences.</p>
+
+<table>
+  <thead>
+    <tr><th>Metric</th><th class="num">Production</th><th class="num">Greedy + Consol.</th><th class="num">Exact MIP ★</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Total cost — cheapest courier (R)</td><td class="num">R3,689.34</td><td class="num">R2,935.15</td><td class="num best">R2,867.03</td></tr>
+    <tr><td>Total cost — actual couriers used (R)</td><td class="num">R3,919.50</td><td class="num dim">—</td><td class="num dim">—</td></tr>
+    <tr><td><strong>Structural saving vs production</strong></td><td class="num dim">—</td><td class="num green">R754.19 (20.4%)</td><td class="num best">R822.31 (22.3%)</td></tr>
+    <tr><td>Full saving (allocation + courier choice)</td><td class="num dim">—</td><td class="num green">R984.35</td><td class="num best">R1,052.47</td></tr>
+    <tr><td>Total parcels</td><td class="num dim">—</td><td class="num">6,018</td><td class="num best">5,880</td></tr>
+    <tr><td>Split rate (orders with &gt;1 parcel)</td><td class="num">32.9%</td><td class="num">30.7%</td><td class="num">32.5%</td></tr>
+    <tr><td>Mean parcels per order</td><td class="num">1.573</td><td class="num">1.580</td><td class="num best">1.543</td></tr>
+    <tr><td>Mean cost per order (R)</td><td class="num">R0.97</td><td class="num">R0.77</td><td class="num best">R0.75</td></tr>
+    <tr><td>Median cost per order (R)</td><td class="num">R0.69</td><td class="num">R0.62</td><td class="num best">R0.62</td></tr>
+    <tr><td>Items truly unshipped (cancelled)</td><td class="num">4 <sup>†</sup></td><td class="num">6</td><td class="num best">4</td></tr>
+    <tr><td>Runtime (3,810 orders)</td><td class="num dim">—</td><td class="num">~229 s</td><td class="num">~273 s</td></tr>
+  </tbody>
+</table>
+
+<div class="callout orange">
+  <strong>Why does the Integer MIP have a higher split rate (32.5%) than Greedy (30.7%) but fewer total parcels (5,880 vs 6,018)?</strong>
+  The MIP minimises <em>cost</em>, not parcel count. On some orders it opens a cheap second facility (splitting a 1-parcel order into 2), but on others it eliminates the expensive third facility (turning a 3-parcel order into 2). The net effect is 138 fewer parcels overall, distributed differently across orders. It is closer to production's 32.9% split rate while being significantly cheaper.
+</div>
+
+<h3>Where does the saving come from?</h3>
+<div class="bars">
+  <div class="bar-row">
+    <div class="bl"><strong>Route LMR — same-hub facility</strong><br><small style="color:var(--muted)">3,522 orders · same parcel count as production</small></div>
+    <div class="bw"><div class="bf g" style="width:86%"><span class="bv">R649.04 (86.1%)</span></div></div>
+  </div>
+  <div class="bar-row">
+    <div class="bl"><strong>Consolidation (greedy)</strong><br><small style="color:var(--muted)">139 orders where we use fewer parcels</small></div>
+    <div class="bw"><div class="bf b" style="width:13%"><span class="bv">R97.85 (13.0%)</span></div></div>
+  </div>
+  <div class="bar-row">
+    <div class="bl"><strong>MIP extra gain over greedy</strong><br><small style="color:var(--muted)">230 orders cheaper · 138 fewer parcels</small></div>
+    <div class="bw"><div class="bf p" style="width:9.0%"><span class="bv">+R68.12</span></div></div>
+  </div>
+  <div class="bar-row">
+    <div class="bl"><strong>Lost (greedy > production parcels)</strong><br><small style="color:var(--muted)">149 orders where production consolidates better</small></div>
+    <div class="bw"><div class="bf r" style="width:1%"><span class="bv">−R7.30</span></div></div>
+  </div>
+</div>
+<p>The dominant saving (86%) is from <strong>route-LMR-aware facility selection</strong>. Production allocates from facilities geographically close to the warehouse but in a different courier hub from the customer, paying Main rates (R0.69). Our algorithm explicitly prefers same-hub facilities, paying Local rates (R0.46) — a 33% unit-cost reduction on 92% of orders.</p>
+
+<!-- FIGURE 6 — three-way comparison -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_06_three_way_comparison.png" alt="Three-way comparison: Production vs Greedy vs Exact MIP"/>
+  <div class="plot-cap">
+    <strong>Figure 6 — Three-way comparison: Production vs Greedy + Consolidation vs Exact MIP</strong>
+    (all costs on cheapest-eligible-courier basis with route-LMR).<br>
+    <strong>Top-left (parcel count distribution):</strong> Production splits at 32.9%, Greedy at 30.7%, Integer MIP at 32.5%.
+    MIP has a slightly higher split rate than Greedy but fewer total parcels (5,880 vs 6,018) — it trades some 1-parcel orders for eliminating 3-parcel orders.
+    <strong>Top-centre (Greedy vs Production scatter):</strong> 40% of orders are cheaper with Greedy; points below the diagonal represent savings.
+    <strong>Top-right (MIP vs Production scatter):</strong> 42% of orders are cheaper with MIP. The MIP gains more at the high-cost tail (orders above R2).
+    <strong>Bottom-left (per-order savings):</strong> Both algorithms save on the same orders (savings distributions tightly overlap), with MIP shifted slightly higher — it captures an extra R66 that Greedy misses.
+    <strong>Bottom-right (by delivery type):</strong> DoorToDoor saves more (Greedy −23.6%, MIP −25.4%) than StorePickup (−9.4%, −11.2%) because route-LMR has more room for improvement when the destination varies.
+  </div>
+</div>
+
+<h3>Why the Exact MIP outperforms Greedy</h3>
+<p>The greedy solver assigns items sequentially, committing to a facility before seeing the full picture. This creates two failure modes that the MIP avoids:</p>
+<table>
+  <thead><tr><th>Failure mode</th><th>Greedy outcome</th><th>MIP outcome</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Premature cheap-facility lock-in:</strong> item-0 placed at cheap F2 (cost 20), exhausting its stock; item-1 forced to expensive F1 (cost 150)</td>
+      <td>2 parcels = R170</td>
+      <td class="best">Both items → F1 = R150 ✓</td>
+    </tr>
+    <tr>
+      <td><strong>Wrong facility subset:</strong> greedy opens {F1, F2}; optimal is {F2, F3}. Consolidation cannot switch — it only moves items between already-open facilities</td>
+      <td>Stuck with {F1, F2}</td>
+      <td class="best">Finds {F2, F3} ✓</td>
+    </tr>
+  </tbody>
+</table>
+<p>Head-to-head across 3,810 orders: <strong>3,561 tied</strong> (same cost — single-facility orders where greedy is already optimal), <strong>230 strictly cheaper with MIP</strong> (avg −R0.35/order), <strong>19 marginally worse</strong> (avg +R0.69/order) due to alternative-SKU pre-selection. Net: R68.12 gain, 138 fewer parcels.</p>
+
+<p style="font-size:12px;color:var(--muted);margin-top:-8px"><sup>†</sup> Production logs 6 cancellation events, but 2 (orders 663, 1540) are <em>internal retry records</em> — the system abandoned a reservation attempt before placing a new one at a better facility. The item is ultimately shipped in both cases. True unshipped items in production: 4.</p>
+
+<h3>Cancellation deep-dive — three distinct cases</h3>
+<p>Not all "cancellations" are alike. Inspecting the raw production plan JSON and reservation records for every cancelled order reveals three fundamentally different causes, each exposing a different aspect of the algorithms' behaviour:</p>
+
+<div style="overflow-x:auto;margin:20px 0">
+<table>
+  <thead>
+    <tr>
+      <th>Type</th><th>Orders</th><th>Root cause</th>
+      <th class="num">Production</th><th class="num">Greedy</th><th class="num">MIP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1 — True stockout</strong></td>
+      <td>428, 625, 3194, 3734</td>
+      <td>Zero stock anywhere in the network for this SKU</td>
+      <td class="num">✗ cancel</td><td class="num">✗ cancel</td><td class="num">✗ cancel</td>
+    </tr>
+    <tr>
+      <td><strong>2 — Quantity fragmentation</strong></td>
+      <td>651, 1319</td>
+      <td>No single facility has enough units, but total network stock is sufficient; requires splitting the quantity across facilities</td>
+      <td class="num best">✓ ships (splits)</td><td class="num warn">✗ cancel</td><td class="num best">✓ ships (splits)</td>
+    </tr>
+    <tr>
+      <td><strong>3 — Internal retry</strong></td>
+      <td>663, 1540</td>
+      <td>Production logged a cancellation event while trying an initial reservation, then successfully re-reserved the item at a different facility. Item is shipped.</td>
+      <td class="num best">✓ ships</td><td class="num best">✓ ships</td><td class="num best">✓ ships</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4>Type 1 — True stockout (orders 428, 625, 3194, 3734)</h4>
+<p>These share the same pattern: one SKU has <code>qty_available = 0</code> across every facility in the network. All three algorithms agree — if there is no stock, the item cannot be shipped. Notably, SKU <code>59971744</code> appears in two separate orders (428 and 3194), confirming it was a network-wide stockout, not a localised availability gap.</p>
+<div class="code-block" style="font-size:12.5px;line-height:1.7">
+<span style="color:#e06c75">order_idx=428</span>: SKU <code>59971744</code>  qty_needed=1  total_stock=<strong>0</strong>  → all 3 algorithms cancel<br>
+<span style="color:#e06c75">order_idx=625</span>: SKU <code>59710180</code>  qty_needed=1  total_stock=<strong>0</strong>  → all 3 algorithms cancel<br>
+<span style="color:#e06c75">order_idx=3194</span>: SKU <code>59971744</code>  qty_needed=1  total_stock=<strong>0</strong>  → all 3 algorithms cancel<br>
+<span style="color:#e06c75">order_idx=3734</span>: SKU <code>36548066</code>  qty_needed=1  total_stock=<strong>0</strong>  → all 3 algorithms cancel
+</div>
+
+<h4>Type 2 — Quantity fragmentation (orders 651 and 1319)</h4>
+<p>These are the most instructive cases. The stock <em>exists</em> in the network but is distributed across many small-holdings — no single facility has enough to fill the required quantity alone. Production handles this by issuing one reservation line per unit and spanning multiple branches. The Integer MIP handles it natively via its integer variable <code>x[i,j]</code> (units of item <em>i</em> to facility <em>j</em>). The Greedy fails: its sequential allocation commits stock to earlier items, leaving the fragmented high-quantity item with insufficient remaining stock at candidate facilities even after the last-resort split step.</p>
+
+<div class="two-col" style="margin:16px 0">
+  <div class="card">
+    <h4>Order 651 — 14-item DoorToDoor bulk order</h4>
+    <p style="font-size:12.5px;margin:0 0 8px"><strong>SKU 60086275</strong>: qty needed = <strong>20</strong> · max at one facility = <strong>10</strong> · total stock = 66 across 12 facilities</p>
+    <div class="code-block" style="font-size:11.5px;line-height:1.6">
+Production: 10 units × branch 330302<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 units × branch 330200<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 units × branch 330027  → 20 shipped ✓<br>
+MIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x[item, fac_A] + x[item, fac_B] + … = 20  → 20 shipped ✓<br>
+Greedy:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sequential lock-in exhausts nearby stock → <span style="color:#e06c75">CANCEL ✗</span>
+    </div>
+    <p style="font-size:12.5px;margin:8px 0 0"><strong>SKU 18034642</strong>: qty needed = <strong>10</strong> · max at one facility = <strong>6</strong> · total stock = 18</p>
+    <div class="code-block" style="font-size:11.5px;line-height:1.6">
+Production: 4 units × branch 330200 + 6 units × branch 330027  → 10 shipped ✓<br>
+MIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x[item, fac_B] + x[item, fac_C] = 10  → 10 shipped ✓<br>
+Greedy:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fulfills both items successfully (stock sufficient at one facility)
+    </div>
+  </div>
+  <div class="card">
+    <h4>Order 1319 — 5-item StorePickup multi-quantity</h4>
+    <p style="font-size:12.5px;margin:0 0 8px"><strong>SKU 57259651</strong>: qty needed = <strong>6</strong> · max at one facility = <strong>5</strong> · total stock = 28 across 15 facilities</p>
+    <div class="code-block" style="font-size:11.5px;line-height:1.6">
+Production: 5 units × branch 060661 + 1 unit × branch 060672  → 6 shipped ✓<br>
+MIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x[item, fac_A] = 5, x[item, fac_B] = 1  → 6 shipped ✓<br>
+Greedy:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color:#e06c75">CANCEL ✗</span>
+    </div>
+    <p style="font-size:12.5px;margin:8px 0 0"><strong>SKU 57259656</strong>: qty needed = <strong>3</strong> · max at one facility = <strong>2</strong> · total stock = 6 across 5 facilities</p>
+    <div class="code-block" style="font-size:11.5px;line-height:1.6">
+Production: 1 unit × branch 060670 + 2 units × branch 060672  → 3 shipped ✓<br>
+MIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x[item, fac_A] = 1, x[item, fac_B] = 2  → 3 shipped ✓<br>
+Greedy:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color:#e06c75">CANCEL ✗</span> (or fulfills only 1 of these — accounts for 1 cancellation)
+    </div>
+  </div>
+</div>
+
+<div class="callout orange">
+  <strong>Key insight.</strong> The Greedy's <code>_split_cancelled</code> last-resort pass does exist and tries to split unfulfilled quantities, but it runs <em>after</em> all other items have already been assigned. By then, nearby facilities have had their stock consumed for earlier items in the same order, leaving insufficient remaining stock to satisfy the large quantity even when spread across <code>max_k = 3</code> facilities. The Integer MIP is immune to this sequencing problem because it optimises all items jointly — stock is never "locked in" before high-quantity items are considered.
+</div>
+
+<h4>Type 3 — Internal retry (orders 663 and 1540)</h4>
+<p>These appear as cancellations in the production plan's <code>cancellations</code> list, but inspecting the final reservations shows every item is shipped. What happened: the production system attempted an initial reservation for a SKU that appears <em>twice</em> in the same order (two separate line items). It tried to fulfil both from a single facility, found insufficient stock (max at one facility = 11–17 units; only 1 unit needed per line so this is odd — likely a branch-level allocation race condition), cancelled that attempt, and successfully re-reserved both lines across two different facilities. This is a logging artefact of the production system's internal retry logic, not a true fulfilment failure. Both the Greedy and MIP allocate these orders correctly without any cancellation.</p>
+
+<div class="code-block" style="font-size:12px;line-height:1.7">
+<span style="color:#98c379">order_idx=663</span>: SKU <code>56000738</code> ordered ×2  · max_single_fac=17  · total_stock=148<br>
+&nbsp;  Production log: 1 cancellation event + 2 final reservations (branch 000051 + branch 004112) ✓<br>
+&nbsp;  Greedy &amp; MIP: 2 reservations, 0 cancellations ✓<br><br>
+<span style="color:#98c379">order_idx=1540</span>: SKU <code>58981195</code> ordered ×2  · max_single_fac=11  · total_stock=103<br>
+&nbsp;  Production log: 1 cancellation event + 2 final reservations (branch 000057 + branch 004112) ✓<br>
+&nbsp;  Greedy &amp; MIP: 2 reservations, 0 cancellations ✓
+</div>
+
+<h3>Alternative SKU usage — all three allocators</h3>
+<p>Of the 3,810 orders, <strong>238</strong> contain at least one item with an <code>alternative_sku</code> field. However, 162 of these have <code>alternative_sku = primary_sku</code> (a trivial self-reference with no substitution meaning), leaving <strong>95 orders / 127 items</strong> that carry a genuinely different substitute product. All 127 items have <code>quantity = 1</code>.</p>
+
+<div style="overflow-x:auto;margin:20px 0">
+<table>
+  <thead>
+    <tr><th>Metric</th><th class="num">Production</th><th class="num">Greedy + Consolidation</th><th class="num">Exact MIP</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Orders where a real (different) alt_sku exists</td><td class="num">95</td><td class="num">95</td><td class="num">95</td></tr>
+    <tr><td>Item lines substituted with <strong>alternative</strong> SKU</td><td class="num best">127 / 127 (100%)</td><td class="num">0 / 127 (0%)</td><td class="num">0 / 127 (0%)</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Both allocators apply the same substitution rules for every order line (a single line = all units of one SKU request, e.g. qty=5 of SKU A):</p>
+<ul style="line-height:1.8;margin-bottom:12px">
+  <li>All units of a line must use the <strong>same SKU</strong> — no partial mix such as 3 primary + 2 alternative for one line.</li>
+  <li>The <strong>primary SKU is always tried first</strong>; the alternative is only used if the primary cannot fulfil the full quantity.</li>
+  <li>A line's units <strong>cannot be split across SKUs across facilities</strong> — e.g. 3 primary from Facility A and 2 alternative from Facility B is not supported.</li>
+</ul>
+<p>Where the two allocators differ is <em>when</em> the primary-vs-alt decision is made: the Greedy decides at allocation time by inspecting each candidate facility's actual stock; the Exact MIP pre-selects the SKU once globally (checking total network stock) before the LP assigns any facility. On this dataset both paths yield identical outcomes — primary for all 127 order lines — because primary stock is always sufficient.</p>
+
+<div class="callout orange">
+  <strong>Finding.</strong> Both allocators use the <strong>primary SKU 100% of the time</strong> on this dataset, while production uses the <strong>alternative SKU 100% of the time</strong> — a total divergence of 127 item lines. Of these 127, 97 have alt-SKU stock visible in our inventory snapshot; production chose alt in all 97 cases, even when primary stock far exceeded alt stock (e.g. order 447: primary = 592 units, alt = 5 units; order 3190: primary = 1,159, alt = 65). For the remaining 30 items the alt SKU does not appear in our inventory at all, yet production still shipped it — suggesting these items may exist in a separate inventory pool not captured by the order-level JSON. Taken together, this strongly implies production treats <code>alternative_sku</code> as the commercially preferred or superseding product rather than a last-resort fallback. Clarifying the business semantics of <code>alternative_sku</code> with the merchandise team is a prerequisite before deploying either allocator in production.
+</div>
+
+<h3>Known limitations</h3>
+<div class="lim">
+  <h4>Alternative SKU substitution — three constraints</h4>
+  <p>The current implementation has three interlocking constraints around SKU substitution that apply across both allocators:</p>
+  <ol style="margin-top:8px;line-height:1.8">
+    <li><strong>Primary-first policy.</strong> Both the Greedy and the MIP treat the primary SKU as the first choice and the alternative as a pure fallback, activated only when primary stock is insufficient. This is the opposite of production's observed behaviour. The policy is a single line of code in both paths and could be inverted, but the correct direction must first be confirmed with the business.</li>
+    <li><strong>Homogeneous substitution only.</strong> When an order requests 5 units of SKU A, the model ships either 5 × A or 5 × B — never a mix such as 3 × A + 2 × B. Full partial substitution would require adding a SKU dimension to the integer variable structure: <code>x<sub>ij</sub></code> (units of item i at facility j) would become <code>x<sub>ijs</sub></code> (units fulfilled with SKU s at facility j), a substantially harder combinatorial problem. This is a shared constraint of both solvers and is explicit in the code.</li>
+    <li><strong>MIP pre-selection is network-level; no within-facility mixing.</strong> The MIP locks SKU per item by inspecting total stock across the whole network before the LP runs — it never evaluates what any specific facility holds for each SKU. This means it cannot exploit a single facility that stocks both SKUs cheaply (e.g. Facility A has primary for item 1 and alt for item 2 at the lowest combined cost). The greedy's <code>_facility_can_cover</code> does perform this per-facility, cross-item mixing check, giving it a structural advantage in the single-facility path. For this dataset the distinction is immaterial (primary stock always sufficient, qty = 1 for all real-alt items), but it is a genuine architectural difference.</li>
+  </ol>
+  <p style="margin-top:10px">Together these constraints explain the 100% divergence from production. A production-ready allocator should resolve the business semantics of <code>alternative_sku</code> first, then decide which constraints to relax.</p>
+</div>
+<div class="lim">
+  <h4>Static inventory snapshot — no concurrent-order interaction</h4>
+  <p>Both solvers assume a fixed inventory snapshot. In production, multiple simultaneous orders deplete shared stock. The theoretically correct model would be a global MIP over all concurrent orders with shared stock constraints — but this is NP-hard at real-world scale. Our per-order approach is a pragmatic approximation consistent with how production runs.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TASK 3 — PREDICTIVE MODEL
+═══════════════════════════════════════════════════════════════ -->
+<hr/>
+<div class="sh" id="task3">
+  <div class="badge t3">3</div>
+  <h2>Task 3 — Predictive Model for n_parcels</h2>
+</div>
+
+<h3>Objective and motivation</h3>
+<p>The allocation solver runs in ~59 ms per order (Greedy) to ~68 ms (Exact MIP), both measured. A fast predictor that estimates <em>how many parcels</em> an order will require — from information available at order arrival — enables three production use-cases: skip the allocator for clearly single-parcel orders (&lt;0.1 ms vs ~60 ms); route complex orders to the exact MIP solver; and set delivery-time expectations for customers before allocation runs. XGBoost inference runs at ~0.4 ms/order in batch mode (measured), though single-record calls carry ~25 ms of Python/DataFrame overhead that a batched API gateway would eliminate.</p>
+<p>We predict <code>n_parcels</code> (the count of distinct physical facilities used by production) as a 4-class ordinal classification task. We use the production plan as labels and are careful to avoid label leakage.</p>
+
+<h3>Target: 4-class ordinal classification</h3>
+<table>
+  <thead><tr><th>Class</th><th class="num">Count</th><th class="num">Share</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr class="best"><td>1 parcel (no split)</td><td class="num">2,523</td><td class="num">66.2%</td><td>All items from one physical facility</td></tr>
+    <tr><td>2 parcels</td><td class="num">744</td><td class="num">19.5%</td><td>Split across two physical facilities</td></tr>
+    <tr><td>3 parcels</td><td class="num">297</td><td class="num">7.8%</td><td>Three-way split</td></tr>
+    <tr class="warn"><td>4+ parcels</td><td class="num">246</td><td class="num">6.5%</td><td>Highly fragmented (multi-brand, large orders)</td></tr>
+  </tbody>
+</table>
+<p>We treat it as 4-class (not binary) because errors have ordinal severity — predicting 1 parcel when truth is 4 is far worse than predicting 3. We encode classes as 0–3 for XGBoost compatibility and map back to 1–4+ for reporting.</p>
+
+<h3>Leakage prevention</h3>
+<p>Any field written by the production plan is off-limits as a feature. We explicitly audited and excluded:</p>
+<div class="callout red" style="font-size:13.5px">
+  <code>n_parcels</code> (the label itself) · <code>couriers_used</code> · <code>fc_codes</code> (facility codes used) · <code>n_cancellations</code> · <code>cost_rand</code> · <code>is_cancelled</code> · <code>dest_lmr</code><br>
+  <span style="font-size:12px;color:#555;display:block;margin-top:6px"><strong>dest_lmr is subtle</strong> — it looks like a geographic feature but actually encodes which courier and facility the production algorithm chose, making it post-allocation information.</span>
+</div>
+
+<h3>Feature sets</h3>
+<div class="two-col">
+  <div class="card">
+    <h4>Full (12 features) — available at allocation time</h4>
+    <table style="font-size:12px;margin:0;box-shadow:none">
+      <thead><tr><th>Feature</th><th>Type</th><th>What it captures</th></tr></thead>
+      <tbody>
+        <tr><td>n_items</td><td>int</td><td>Total line items in order</td></tr>
+        <tr><td>n_unique_skus</td><td>int</td><td>Distinct product codes — the clearest split predictor</td></tr>
+        <tr><td>n_trading_companies</td><td>int</td><td>Distinct brands — multi-brand forces different DCs</td></tr>
+        <tr><td>total_quantity</td><td>int</td><td>Sum of all item quantities</td></tr>
+        <tr><td>has_excluded_branches</td><td>bool</td><td>Any per-facility item restriction in this order</td></tr>
+        <tr><td>has_alternative_sku</td><td>bool</td><td>Any substitution option available</td></tr>
+        <tr><td>delivery_type</td><td>cat</td><td>DoorToDoor vs StorePickup</td></tr>
+        <tr><td>destination_province</td><td>cat</td><td>9-level province — proxy for network density</td></tr>
+        <tr style="background:#e8f8ef"><td><strong>n_full_facilities</strong></td><td>int</td><td><strong>Facilities that can cover ALL items without splitting</strong></td></tr>
+        <tr><td>min_candidates</td><td>float</td><td>Fewest facilities stocking any one SKU (bottleneck)</td></tr>
+        <tr><td>avg_candidates</td><td>float</td><td>Mean facilities per SKU across this order</td></tr>
+        <tr><td>max_candidates</td><td>float</td><td>Most-available SKU's candidate count</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Order-only (8 features) — available at order arrival</h4>
+    <p style="font-size:13px">The first 8 rows from the Full set — all four inventory features are dropped. This model runs before any inventory lookup, enabling pre-screening at the moment the customer submits the order.</p>
+    <div class="callout" style="margin-top:14px;font-size:13px">
+      <strong>n_full_facilities explained:</strong> For each order, we query how many facilities hold sufficient stock for <em>every</em> SKU in the order simultaneously. If this count is ≥ 1, the order can trivially be fulfilled without any split. If 0, a split is near-certain (99.8% of the time). This single feature is the strongest predictor of whether an order lands in the "1 parcel" class vs any other class.
+    </div>
+    <div class="callout green" style="margin-top:10px;font-size:13px">
+      <strong>min/avg/max_candidates:</strong> For each SKU in the order, count how many facilities stock it with sufficient quantity. These three aggregates describe the <em>distribution</em> of options across SKUs — min is the bottleneck (scarcest item), max is the most available, avg is the overall picture.
+    </div>
+  </div>
+</div>
+
+<!-- FIGURE 7 TASK3 EDA -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_07_task3_eda.png" alt="Task 3 EDA — feature distributions"/>
+  <div class="plot-cap">
+    <strong>Figure 7 — Feature EDA for predictive model.</strong>
+    Left: n_unique_skus distribution by n_parcels class — clear monotone ordering, 1-SKU orders concentrate at 1 parcel, multi-SKU at 3+.
+    Centre: destination province vs mean n_parcels — remote provinces consistently produce more parcels.
+    Right: n_full_facilities vs split class — the 0-vs-positive divide is the sharpest signal in the entire feature set.
+  </div>
+</div>
+
+<h3>Evaluation approach and metric choice</h3>
+<p><strong>80/20 stratified split</strong> — 3,048 train, 762 test, stratified so all four classes appear proportionally in both sets. <strong>5-fold cross-validation</strong> on the training set gives stable generalisation estimates before touching the test set.</p>
+<div class="two-col">
+  <div class="card">
+    <h4>Why weighted F1?</h4>
+    <p style="font-size:13px">Plain accuracy is misleading: "always predict 1 parcel" gets 66.2% without learning anything. Weighted F1 computes precision and recall for each class separately then averages by class frequency. This credits the model for correctly identifying minority classes (3 and 4+ parcels) even though they are rare.</p>
+  </div>
+  <div class="card">
+    <h4>Why MAE in parcel units?</h4>
+    <p style="font-size:13px">Mean Absolute Error treats the 4 classes as ordered numbers: predicting 1 parcel when truth is 4 (error = 3) is correctly penalised more than predicting 3 (error = 2) or 2 (error = 1). Accuracy does not respect this ordinal structure at all. Our best model achieves MAE = 0.123 parcels.</p>
+  </div>
+</div>
+
+<h3>Model results</h3>
+<table>
+  <thead>
+    <tr><th>Model</th><th>Features</th><th class="num">Acc (5-fold CV)</th><th class="num">F1w (CV)</th><th class="num">Acc (test)</th><th class="num">MAE (test)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Baseline — always predict 1 parcel</td><td>—</td><td class="num dim">—</td><td class="num dim">—</td><td class="num">66.2%</td><td class="num">0.545</td></tr>
+    <tr><td>Simple rule: <code>n_full_facilities≥1</code>→1, else→2</td><td>1</td><td class="num dim">—</td><td class="num dim">—</td><td class="num">83.9%</td><td class="num">0.227</td></tr>
+    <tr><td>Logistic Regression</td><td>Full (12)</td><td class="num">85.5% ± 1.5%</td><td class="num">84.7% ± 1.7%</td><td class="num dim">—</td><td class="num dim">—</td></tr>
+    <tr class="best"><td>XGBoost ★</td><td>Full (12)</td><td class="num">89.2% ± 0.5%</td><td class="num">88.8%</td><td class="num">88.5%</td><td class="num">0.123</td></tr>
+    <tr><td>Logistic Regression</td><td>Order-only (8)</td><td class="num">81.4% ± 1.5%</td><td class="num">79.7% ± 1.7%</td><td class="num dim">—</td><td class="num dim">—</td></tr>
+    <tr><td>XGBoost</td><td>Order-only (8)</td><td class="num">80.9% ± 1.2%</td><td class="num">79.9%</td><td class="num">79.8%</td><td class="num">0.224</td></tr>
+  </tbody>
+</table>
+<p>XGBoost outperforms Logistic Regression in both settings because the relationship between features and parcel count is non-linear — it contains threshold effects (e.g. n_full_facilities = 0 creates a cliff in split probability) and feature interactions (high quantity AND low candidate count → 4+ parcels) that tree-based models handle naturally.</p>
+
+<h3>Per-class recall — where does the model struggle?</h3>
+<table>
+  <thead><tr><th>Class</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">F1</th><th class="num">Support</th></tr></thead>
+  <tbody>
+    <tr class="best"><td>1 parcel</td><td class="num">0.97</td><td class="num">0.99</td><td class="num">0.98</td><td class="num">505</td></tr>
+    <tr><td>2 parcels</td><td class="num">0.82</td><td class="num">0.75</td><td class="num">0.78</td><td class="num">149</td></tr>
+    <tr class="warn"><td>3 parcels</td><td class="num">0.44</td><td class="num">0.37</td><td class="num">0.40</td><td class="num">59</td></tr>
+    <tr><td>4+ parcels</td><td class="num">0.64</td><td class="num">0.78</td><td class="num">0.70</td><td class="num">49</td></tr>
+  </tbody>
+</table>
+
+<!-- FIGURE 8 — confusion matrix -->
+<div class="plot-wrap">
+  <img src="data/cache/fig_08_confusion.png" alt="Confusion matrix — XGBoost n_parcels"/>
+  <div class="plot-cap">
+    <strong>Figure 8 — Confusion matrix (XGBoost Full, test set).</strong>
+    Strong diagonal for classes 1 and 4+. The 3-parcel class (row 2, 0-indexed) is the most confused — it bleeds into both 2-parcel and 4+-parcel predictions. This is expected: 3-parcel orders sit in the middle of the ordinal scale and share feature patterns with their neighbours on both sides.
+  </div>
+</div>
+
+<h3>SHAP feature importance — what drives parcel count?</h3>
+<p>SHAP (SHapley Additive exPlanations) assigns each feature a contribution to each prediction. For multi-class models, we average absolute SHAP values across all four classes and all test samples. This gives one importance score per feature that reflects its total influence regardless of direction.</p>
+
+<div class="two-col">
+  <div class="card">
+    <h4>Full model (12 features) — SHAP ranking</h4>
+    <div class="bars">
+      <div class="bar-row"><div class="bl" style="font-size:12px">total_quantity</div><div class="bw"><div class="bf o" style="width:80%"><span class="bv">1.51</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">n_full_facilities</div><div class="bw"><div class="bf b" style="width:79%"><span class="bv">1.50</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">n_unique_skus</div><div class="bw"><div class="bf g" style="width:27%"><span class="bv">0.51</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">n_items</div><div class="bw"><div class="bf g" style="width:22%"><span class="bv">0.41</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">avg_candidates</div><div class="bw"><div class="bf t" style="width:19%"><span class="bv">0.36</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">n_trading_companies</div><div class="bw"><div class="bf p" style="width:18.5%"><span class="bv">0.35</span></div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>Order-only model (8 features) — SHAP ranking</h4>
+    <div class="bars">
+      <div class="bar-row"><div class="bl" style="font-size:12px">total_quantity</div><div class="bw"><div class="bf o" style="width:90%"><span class="bv">1.73</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">n_items</div><div class="bw"><div class="bf b" style="width:52%"><span class="bv">1.01</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">n_trading_companies</div><div class="bw"><div class="bf p" style="width:35%"><span class="bv">0.68</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">n_unique_skus</div><div class="bw"><div class="bf g" style="width:28%"><span class="bv">0.55</span></div></div></div>
+      <div class="bar-row"><div class="bl" style="font-size:12px">destination_province</div><div class="bw"><div class="bf g" style="width:7%"><span class="bv">0.13</span></div></div></div>
+    </div>
+  </div>
+</div>
+<p style="font-size:12px;color:var(--muted);margin-top:6px">Mean absolute SHAP values averaged across all 4 classes and all test samples (higher = more influential). <code>total_quantity</code> and <code>n_full_facilities</code> are nearly tied at the top of the full model.</p>
+
+<div class="callout purple">
+  <strong>The SHAP values reveal a two-stage mechanism for n_parcels prediction:</strong><br>
+  <code>n_full_facilities</code> (SHAP = 1.50) primarily drives the <strong>1 vs 2+ parcel</strong> boundary — it is the near-perfect switch for whether <em>any</em> split occurs. <code>total_quantity</code> (SHAP = 1.51) drives the <strong>2 vs 3 vs 4+ parcel</strong> graduation — once a split is unavoidable, how many ways it fragments. An intermediate binary analysis (is-split vs not) confirmed this: <code>n_full_facilities</code> dominated with SHAP = 4.73 (2.4× higher than any other feature) when the single question was just "does this order split?" In the 4-class n_parcels task both features are nearly equal, because the model must now answer both questions simultaneously. <strong>Inventory coverage determines whether an order splits; quantity and SKU complexity determine how many ways it splits.</strong>
+</div>
+
+<h3>What the model reveals about the network</h3>
+<div class="three-col">
+  <div class="card">
+    <h4>1. Splitting is a constraint, not a choice</h4>
+    <p style="font-size:13px">When <code>n_full_facilities ≥ 1</code> (68% of orders), the split rate is just 2.9% — the allocator keeps 97% of these orders at one facility. When <code>n_full_facilities = 0</code> (32%), the split rate is 99.8%. The number of splits is set by warehouse stocking decisions, not by the algorithm.</p>
+  </div>
+  <div class="card">
+    <h4>2. Multi-brand orders structurally split</h4>
+    <p style="font-size:13px"><code>n_trading_companies</code> is the 3rd strongest predictor even <em>without</em> inventory data. Different brands ship from dedicated DCs — a 2-brand order will use 2 facilities regardless of inventory state. This cannot be fixed algorithmically.</p>
+  </div>
+  <div class="card">
+    <h4>3. Remote provinces are underserved</h4>
+    <p style="font-size:13px">Northern Cape (41.1% split rate) vs Gauteng (30.9%) — a 10pp gap purely driven by facility density. Customers in remote provinces receive worse consolidation, not because orders are more complex, but because the network has fewer nearby options.</p>
+  </div>
+</div>
+
+<h3>How this model supports production</h3>
+<table>
+  <thead><tr><th>Use-case</th><th>Model</th><th>Benefit</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Fast-track single-facility orders</strong><br><code>n_full_facilities ≥ 1</code> → assign to cheapest directly</td><td>Simple rule</td><td>66% of orders in &lt;0.1 ms vs ~59 ms (measured); cost remains fully optimal</td></tr>
+    <tr><td><strong>Solver routing</strong><br>Predicted 1–2 → Greedy; predicted 3+ → MIP</td><td>Full XGBoost</td><td>Compute budget matched to order complexity</td></tr>
+    <tr><td><strong>Customer pre-notification</strong><br>Predict parcel count at checkout before allocation runs</td><td>Either</td><td>Set delivery expectation in real-time, reduce support tickets</td></tr>
+    <tr><td><strong>Inventory slotting</strong><br>SKU pairs always predicting 3+ parcels</td><td>Order-only</td><td>Co-location replenishment signal — store these SKUs together</td></tr>
+    <tr><td><strong>Network monitoring</strong><br>Rolling predicted split rate over time</td><td>Either</td><td>Spike in predicted splits = stock-coverage deterioration alert before it shows in costs</td></tr>
+  </tbody>
+</table>
+
+<h3>Known limitations</h3>
+<div class="lim">
+  <h4>Labels are production behaviour, not ground truth</h4>
+  <p>The model learns what the production allocator does, including its suboptimal splits. Our Greedy splits 30.7% vs production's 32.9%. Retraining on our allocator's outputs would predict fewer splits and better align with our cost-optimal decisions.</p>
+</div>
+<div class="lim">
+  <h4>Ordinal structure not explicitly enforced</h4>
+  <p>XGBoost treats class labels {0,1,2,3} as unordered categories for its loss function. A proportional-odds model or ordinal XGBoost wrapper would explicitly penalise predictions that are far apart on the ordinal scale, which could improve the 3-parcel recall (currently 37%).</p>
+</div>
+<div class="lim">
+  <h4>Static inventory snapshot in deployment</h4>
+  <p>Inventory features (<code>n_full_facilities</code>, candidate counts) must be recomputed from a live inventory view per order. Predictions from stale inventory degrade significantly — especially the "1 parcel vs any split" boundary, which is almost entirely driven by <code>n_full_facilities</code> and therefore highly sensitive to stock freshness.</p>
+</div>
+<div class="lim">
+  <h4>Small dataset — 3,810 orders</h4>
+  <p>CV confidence intervals of ±0.5–1.2% accuracy. With more data, time-of-day features, SKU-level heat maps, and facility-level fill rates could improve the minority-class recall.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SUMMARY
+═══════════════════════════════════════════════════════════════ -->
+<hr/>
+<div class="sh" id="summary">
+  <div class="badge sum">✓</div>
+  <h2>Summary &amp; Cross-Task Insights</h2>
+</div>
+
+<div class="callout green" style="font-size:15px;line-height:1.7">
+  <strong>The core finding across all three tasks:</strong><br><br>
+  <strong>Splitting is an inventory-coverage problem, not an algorithmic one.</strong>
+  When any single facility holds the full SKU set, the allocator consolidates 97% of the time.
+  When none does, it splits 99.8% of the time. The allocation algorithm's role is to find the
+  <em>cheapest</em> split configuration — but the <em>existence</em> of the split is determined
+  by warehouse slotting and replenishment decisions made upstream.<br><br>
+  A 22.3% cost saving over production is achievable without touching the network at all,
+  purely by selecting facilities in a route-LMR-aware way.
+</div>
+
+<h3>All key numbers in one place</h3>
+<table>
+  <thead><tr><th>Task</th><th>Metric</th><th class="num">Value</th></tr></thead>
+  <tbody>
+    <tr><td>EDA</td><td>Production split rate (corrected for DC virtual branches)</td><td class="num">32.9%</td></tr>
+    <tr><td>EDA</td><td>Courier-selection gap (actual vs cheapest possible)</td><td class="num orange">R230.16</td></tr>
+    <tr><td>EDA</td><td>Orders where no single facility covers entire order</td><td class="num">1,215 (31.9%)</td></tr>
+    <tr><td>EDA</td><td>Multi-brand orders split rate</td><td class="num red">100%</td></tr>
+    <tr><td>EDA</td><td>Spearman ρ (n_items vs n_parcels)</td><td class="num">0.806</td></tr>
+    <tr><td>Task 2</td><td>Integer MIP structural saving vs production</td><td class="num best">R822.31 (22.3%)</td></tr>
+    <tr><td>Task 2</td><td>Integer MIP full saving incl. courier selection</td><td class="num best">R1,052.47 (26.9%)</td></tr>
+    <tr><td>Task 2</td><td>Source of saving — route LMR alone</td><td class="num">R649.04 (86% of total)</td></tr>
+    <tr><td>Task 2</td><td>Items truly unshipped — Integer MIP vs Greedy</td><td class="num">MIP: 4 · Greedy: 6 · Production: 4† (4 true stockouts; Greedy adds 2 qty-fragmentation failures)</td></tr>
+    <tr><td>Task 2</td><td>Integer MIP runtime for 3,810 orders</td><td class="num">~273 s</td></tr>
+    <tr><td>Task 3</td><td>XGBoost Full — accuracy (4-class n_parcels)</td><td class="num best">88.5%</td></tr>
+    <tr><td>Task 3</td><td>XGBoost Full — MAE in parcels</td><td class="num best">0.123</td></tr>
+    <tr><td>Task 3</td><td>Orders that could skip the allocator entirely</td><td class="num">2,524 (66.2%)</td></tr>
+    <tr><td>Task 3</td><td>3-parcel class recall (hardest class)</td><td class="num warn">37%</td></tr>
+  </tbody>
+</table>
+
+<h3>Recommended three-tier production pipeline</h3>
+<div class="callout teal" style="font-size:14px;line-height:1.8">
+  <strong>Step 1</strong> — Compute <code>n_full_facilities</code> from live inventory snapshot (&lt;0.1 ms — scalar lookup)<br>
+  &nbsp;&nbsp;&nbsp;→ <code>≥ 1</code>: assign directly to cheapest eligible facility — <strong>no allocator needed</strong> (covers 66% of orders)<br><br>
+  <strong>Step 2</strong> — Run XGBoost predictor on remaining 34% (~0.4 ms/order in batch; ~25 ms if called one-at-a-time due to DataFrame overhead — eliminated by batching at the API gateway)<br>
+  &nbsp;&nbsp;&nbsp;→ Predicted 1–2 parcels: run <strong>Greedy allocator</strong> (~59 ms measured, fast heuristic)<br>
+  &nbsp;&nbsp;&nbsp;→ Predicted 3+ parcels: run <strong>Exact MIP</strong> (~68 ms measured — 260.4 s ÷ 3,810 orders)<br><br>
+  <em>Result: 66% of orders served in well under 1 ms; the remainder served with solver complexity matched to order complexity.</em>
+</div>
+
+<h3>Project files</h3>
+<div class="fg">
+  <div class="fc"><code>notebooks/01_eda.ipynb</code><p>EDA, network analysis, hypothesis tests, coverage metrics</p></div>
+  <div class="fc"><code>notebooks/02_allocation_model.ipynb</code><p>Greedy vs Exact MIP vs production benchmark</p></div>
+  <div class="fc"><code>notebooks/03_predictive_model.ipynb</code><p>n_parcels prediction, SHAP, baselines, leakage audit</p></div>
+  <div class="fc"><code>src/data_loader.py</code><p>CSV → Parquet pipeline with nested JSON flattening</p></div>
+  <div class="fc"><code>src/cost_engine.py</code><p>Route LMR resolution, courier_c proximity, cost lookup</p></div>
+  <div class="fc"><code>src/allocator.py</code><p>Greedy + consolidation + MIP solver, DC branch merging</p></div>
+  <div class="fc"><code>README.md</code><p>Setup, reproducibility guide, all results</p></div>
+</div>
+
+<p style="text-align:center;color:var(--muted2);font-size:12px;margin-top:52px">
+  South African fulfilment network allocation project · 3,810 orders · January 2024 snapshot
+</p>
+
+</div><!-- .page -->
+</body>
+</html>
