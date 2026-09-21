@@ -3,7 +3,10 @@
 Exploratory analysis, cost-optimisation model, and predictive model for a South African
 fulfilment network. Built on a single day of allocation logs (2024-01-05).
 
-> **Full findings:** open `report.html` in a browser.
+> **Full findings:** open `report.html` in a browser, or view it rendered online:
+>
+> - **htmlpreview** (no setup — repo must be public): [view report](https://htmlpreview.github.io/?https://github.com/ulricharmel/ore-project/blob/main/report.html)
+> - **GitHub Pages** (permanent URL — enable in repo Settings → Pages → source: `main /`): [view report](https://ulricharmel.github.io/ore-project/report.html)
 
 ---
 
